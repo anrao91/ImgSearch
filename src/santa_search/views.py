@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -8,8 +9,16 @@ app = ClarifaiApp()
 
 def tag_search(request):
 	query = request.POST.get('tag')
+	img_list = []
 	if query:
-		img_list = Image.objects.filter(tags = query)
+		result = Image.objects.filter(tags = query).limit(20)
+		for img in result:
+			image = {}
+			image['url'] = img.attributes_dict.pop('url', None)
+			image['tags'] = img.attributes_dict.pop('tags', None)
+			img_list.append(image)
+	return HttpResponse(json.dumps(img_list), content_type="application/json")
+
 
 def store_images(image_url):
 	response = app.tag_urls([image_url])

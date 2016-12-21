@@ -21,11 +21,29 @@
 {% block splash %}
   <div class="jumbotron jumbotron-carousel corporate-jumbo">
     <div class="container">
-    <div class="row form-actions">
-    <div class="controls col-sm-offset-4 col-sm-10">
-    <input type="text">
-    </div>
-</div>
+    <div class="row">
+        <div class="col-md-6 searchbox">
+        <h2 class="text-center">Enter search tag</h2>
+            <div id="custom-search-input">
+                <div class="input-group col-md-12">
+                 <form action="#" id="search-form">
+                 {% csrf_token %} 
+                    <input type="text" name="tag" class="form-control input-lg" placeholder="Ex: Christmas"/>
+                  </form>
+                    <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="button">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+  </div> <br> <br>
+  <div class="row">
+            <div class="col-md-12" id="image_list">
+          
+        </div>
+  </div>
     </div>
   </div>
 {% endblock splash %}
@@ -39,5 +57,38 @@
 
 {% block scripts %}
 <script src="{% static 'site/js/site.js' %}"></script>
+<script type="text/javascript">
+  $('#search-form').submit(function(e){
+    e.preventDefault();
+    $.ajax({
+      url: "/search/",
+      xhrFields: {
+        withCredentials: true
+      },
+      type: "POST",
+      data: $(this).serialize(),
+      success: function(response) {
+        $('#image_list').empty();
+        var j =0;
+        if(! response.length == 0) {
+          for (var i = 0; i < response.length; i++) {
+            if(i%4 == 0) {
+              j = i;
+              $('#image_list').append('<br><div class="row" id="img_row_'+i+'"><div class="col-sm-3"><img class="result_img" src="'+response[i]["url"]+'"/></div></div>');
+            } else {
+              $('#img_row_'+j).append('<div class="col-sm-3"><img class="result_img" src="'+response[i]["url"]+'"/></div>');
+            }
+          }
+        } else {
+          $('#image_list').append("<br><h3 class='text-center'>No result found. Try another tag !</h3>");
+        }
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        console.log("Error !");
+      } 
+    });
+    return false;
+  })
+</script>
 {% endblock scripts %}
 
