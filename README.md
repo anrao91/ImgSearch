@@ -29,10 +29,6 @@ Run migrations:
 ### Dependancies 
 * redis-server
 
-### Detailed instructions
-
-Take a look at the docs for more information.
-
 [0]: https://www.python.org/
 [1]: https://www.djangoproject.com/
 [2]: https://pixabay.com
